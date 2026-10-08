@@ -1,0 +1,755 @@
+/* ===================================================
+   1. VARIABLES & RESET
+   =================================================== */
+:root {
+  --bg-dark: #0a0b10;
+  --bg-card: rgba(18, 20, 32, 0.85);
+  --border-card: rgba(255, 255, 255, 0.1);
+  --primary-pink: #ff2a74;
+  --primary-cyan: #00e5ff;
+  --accent-purple: #7928ca;
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --card-radius: 20px;
+  --transition-smooth: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Tajawal', sans-serif;
+}
+
+body {
+  background-color: var(--bg-dark);
+  color: var(--text-main);
+  overflow-x: hidden;
+  min-height: 100vh;
+  position: relative;
+}
+
+/* ===================================================
+   2. KEYFRAME ANIMATIONS (الحركات التلقائية)
+   =================================================== */
+/* كتل الضوء: إزاحة وتكبير (translate + scale) */
+@keyframes floatingGlow {
+  0% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(60px, -40px) scale(1.15); }
+  100% { transform: translate(0, 0) scale(1); }
+}
+
+/* دوران الحلقات الفلكية (rotate) */
+@keyframes orbitSpin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* طفو الشعار الرأسي (translate) */
+@keyframes gentleFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+
+/* حركة الشريط الإخباري اللانهائي (translate) */
+@keyframes marqueeScroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(50%); }
+}
+
+/* نبض المؤشرات التفاعلية (scale) */
+@keyframes pulsePoint {
+  0%, 100% { transform: scale(1); opacity: 0.8; }
+  50% { transform: scale(1.25); opacity: 1; }
+}
+
+/* ===================================================
+   3. BACKGROUND GLOWS
+   =================================================== */
+.bg-lights {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.glow-sphere {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(100px);
+  opacity: 0.28;
+  animation: floatingGlow 14s ease-in-out infinite;
+}
+
+.glow-1 {
+  top: -10%;
+  right: 10%;
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, var(--primary-pink), transparent 70%);
+}
+
+.glow-2 {
+  top: 40%;
+  left: -5%;
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, var(--primary-cyan), transparent 70%);
+  animation-delay: -5s;
+}
+
+.glow-3 {
+  bottom: -10%;
+  right: 30%;
+  width: 550px;
+  height: 550px;
+  background: radial-gradient(circle, var(--accent-purple), transparent 70%);
+  animation-delay: -9s;
+}
+
+/* ===================================================
+   4. NAVBAR
+   =================================================== */
+nav {
+  position: sticky;
+  top: 0;
+  width: 100%;
+  padding: 18px 8%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(10, 11, 16, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border-card);
+  z-index: 100;
+}
+
+.nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  text-decoration: none;
+  color: var(--text-main);
+}
+
+.nav-logo-box {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 42, 116, 0.4);
+  box-shadow: 0 0 15px rgba(255, 42, 116, 0.2);
+  transition: var(--transition-smooth);
+  background: #fce8ea;
+}
+
+.nav-logo-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.nav-brand:hover .nav-logo-box {
+  transform: rotate(15deg) scale(1.1);
+  border-color: var(--primary-pink);
+}
+
+.nav-title {
+  font-weight: 800;
+  font-size: 1.25rem;
+  letter-spacing: -0.5px;
+}
+
+.nav-title span {
+  color: var(--primary-pink);
+}
+
+.social-pills {
+  display: flex;
+  gap: 10px;
+}
+
+.pill-link {
+  padding: 7px 15px;
+  border-radius: 30px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-card);
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: var(--transition-smooth);
+}
+
+.pill-link:hover {
+  background: rgba(255, 42, 116, 0.15);
+  color: #fff;
+  border-color: var(--primary-pink);
+  transform: translateY(-4px) scale(1.05);
+  box-shadow: 0 6px 16px rgba(255, 42, 116, 0.25);
+}
+
+/* ===================================================
+   5. HERO SECTION & LOGO STAGE
+   =================================================== */
+.hero {
+  position: relative;
+  z-index: 10;
+  padding: 60px 8% 40px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 18px;
+  background: rgba(0, 229, 255, 0.08);
+  border: 1px solid rgba(0, 229, 255, 0.3);
+  border-radius: 50px;
+  color: var(--primary-cyan);
+  font-size: 0.9rem;
+  font-weight: 700;
+  margin-bottom: 30px;
+  transition: var(--transition-smooth);
+}
+
+.hero-badge:hover {
+  transform: scale(1.06) rotate(-2deg);
+  border-color: var(--primary-cyan);
+  box-shadow: 0 0 20px rgba(0, 229, 255, 0.3);
+}
+
+.dot-live {
+  width: 8px;
+  height: 8px;
+  background: var(--primary-cyan);
+  border-radius: 50%;
+  animation: pulsePoint 1.8s infinite;
+}
+
+.logo-stage {
+  position: relative;
+  width: 200px;
+  height: 200px;
+  margin-bottom: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: gentleFloat 5s ease-in-out infinite;
+}
+
+.orbit-ring {
+  position: absolute;
+  inset: -12px;
+  border-radius: 50%;
+  border: 2px dashed rgba(255, 42, 116, 0.35);
+  animation: orbitSpin 20s linear infinite;
+}
+
+.orbit-ring-reverse {
+  inset: -24px;
+  border: 1px dotted rgba(0, 229, 255, 0.3);
+  animation: orbitSpin 28s linear infinite reverse;
+}
+
+.orbit-satellite {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 12px;
+  height: 12px;
+  background: var(--primary-pink);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 12px var(--primary-pink);
+}
+
+.main-logo-card {
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: #fce8ea;
+  box-shadow: 0 0 45px rgba(255, 42, 116, 0.35), 0 0 0 4px rgba(255, 255, 255, 0.1);
+  transition: var(--transition-smooth);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero-logo-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.logo-stage:hover .main-logo-card {
+  transform: scale(1.08) rotate(5deg);
+  box-shadow: 0 0 60px rgba(0, 229, 255, 0.45), 0 0 0 6px rgba(0, 229, 255, 0.4);
+}
+
+.hero-title {
+  font-size: 3rem;
+  font-weight: 900;
+  line-height: 1.25;
+  margin-bottom: 16px;
+  letter-spacing: -1px;
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, #fff 20%, var(--primary-pink) 60%, var(--primary-cyan) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.hero-subtitle {
+  max-width: 680px;
+  color: var(--text-muted);
+  font-size: 1.15rem;
+  line-height: 1.7;
+  margin-bottom: 30px;
+}
+
+.hero-skills-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.tag-badge {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-card);
+  padding: 8px 18px;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #cbd5e1;
+  transition: var(--transition-smooth);
+}
+
+.tag-badge:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--primary-pink);
+  color: #fff;
+  transform: translateY(-5px) scale(1.06);
+}
+
+/* ===================================================
+   6. INFINITE MARQUEE TICKER
+   =================================================== */
+.marquee-container {
+  width: 100%;
+  background: rgba(255, 42, 116, 0.06);
+  border-top: 1px solid rgba(255, 42, 116, 0.15);
+  border-bottom: 1px solid rgba(0, 229, 255, 0.15);
+  padding: 16px 0;
+  overflow: hidden;
+  white-space: nowrap;
+  position: relative;
+  margin-bottom: 70px;
+  z-index: 10;
+}
+
+.marquee-inner {
+  display: inline-flex;
+  animation: marqueeScroll 25s linear infinite;
+  gap: 40px;
+}
+
+.marquee-container:hover .marquee-inner {
+  animation-play-state: paused;
+}
+
+.ticker-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #e2e8f0;
+}
+
+.ticker-star {
+  color: var(--primary-cyan);
+  font-size: 1.2rem;
+}
+
+/* ===================================================
+   7. SECTION HEADERS
+   =================================================== */
+.section-head {
+  position: relative;
+  z-index: 10;
+  text-align: center;
+  margin-bottom: 50px;
+  padding: 0 8%;
+}
+
+.section-tag {
+  color: var(--primary-pink);
+  text-transform: uppercase;
+  font-weight: 800;
+  font-size: 0.9rem;
+  letter-spacing: 2px;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.section-title {
+  font-size: 2.2rem;
+  font-weight: 900;
+  margin-bottom: 12px;
+}
+
+.section-desc {
+  color: var(--text-muted);
+  font-size: 1.05rem;
+}
+
+/* ===================================================
+   8. SERVICES SHOWCASE GRID (الكروت والتفاعلات)
+   =================================================== */
+.services-grid {
+  position: relative;
+  z-index: 10;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  gap: 30px;
+  padding: 0 8% 80px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.service-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-radius: var(--card-radius);
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  transition: var(--transition-smooth);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+/* رفع الكارت وتكبيره عند التفاعل (Translate + Scale) */
+.service-card:hover {
+  transform: translateY(-12px) scale(1.02);
+  border-color: rgba(255, 42, 116, 0.4);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), 0 0 30px rgba(255, 42, 116, 0.15);
+}
+
+.card-visual-wrapper {
+  width: 100%;
+  height: 250px;
+  background: #0f1322;
+  overflow: hidden;
+  position: relative;
+  border-bottom: 1px solid var(--border-card);
+}
+
+.card-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: var(--transition-smooth);
+}
+
+/* تكبير وتدوير الصورة عند التحويم (Scale + Rotate) */
+.service-card:hover .card-img {
+  transform: scale(1.08) rotate(1deg);
+}
+
+.card-badge {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  padding: 6px 14px;
+  border-radius: 30px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  background: rgba(10, 11, 16, 0.75);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #fff;
+  z-index: 5;
+  transition: var(--transition-smooth);
+}
+
+.service-card:hover .card-badge {
+  transform: translate(-4px, 4px) scale(1.08);
+  background: var(--primary-pink);
+  border-color: var(--primary-pink);
+}
+
+.card-body {
+  padding: 26px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.card-title {
+  font-size: 1.35rem;
+  font-weight: 800;
+  margin-bottom: 10px;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.card-title-icon {
+  display: inline-block;
+  transition: var(--transition-smooth);
+}
+
+/* تدوير الأيقونة عند التحويم (Rotate + Scale) */
+.service-card:hover .card-title-icon {
+  transform: rotate(20deg) scale(1.25);
+}
+
+.card-text {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  line-height: 1.65;
+  margin-bottom: 20px;
+  flex-grow: 1;
+}
+
+.card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.tech-stack {
+  display: flex;
+  gap: 8px;
+}
+
+.tech-chip {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--primary-cyan);
+  border: 1px solid rgba(0, 229, 255, 0.2);
+}
+
+.action-btn {
+  background: transparent;
+  border: 1px solid var(--primary-pink);
+  color: var(--primary-pink);
+  padding: 8px 18px;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: var(--transition-smooth);
+}
+
+/* تأثير الـ Hover على الأزرار (Translate + Scale) */
+.action-btn:hover {
+  background: var(--primary-pink);
+  color: #fff;
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 6px 18px rgba(255, 42, 116, 0.4);
+}
+
+/* ===================================================
+   9. 3D FLIP CARD SHOWCASE (انقلاب ثلاثي الأبعاد rotateY)
+   =================================================== */
+.special-showcase {
+  padding: 0 8% 100px;
+  max-width: 1400px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 10;
+}
+
+.flip-card-container {
+  perspective: 1200px;
+  width: 100%;
+  max-width: 850px;
+  height: 380px;
+  margin: 0 auto;
+}
+
+.flip-card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-style: preserve-3d;
+  border-radius: var(--card-radius);
+}
+
+/* انقلاب البطاقة 180 درجة بالكامل عند الـ Hover */
+.flip-card-container:hover .flip-card-inner {
+  transform: rotateY(180deg);
+}
+
+.flip-front, .flip-back {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  border-radius: var(--card-radius);
+  border: 1px solid var(--border-card);
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
+}
+
+.flip-front {
+  background: linear-gradient(135deg, rgba(20, 24, 40, 0.95), rgba(10, 11, 16, 0.95));
+  border-color: rgba(0, 229, 255, 0.3);
+  text-align: center;
+  align-items: center;
+}
+
+.flip-front-badge {
+  background: rgba(0, 229, 255, 0.1);
+  color: var(--primary-cyan);
+  border: 1px solid rgba(0, 229, 255, 0.4);
+  padding: 6px 16px;
+  border-radius: 30px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+
+.flip-front h3 {
+  font-size: 2.2rem;
+  font-weight: 900;
+  margin-bottom: 14px;
+  color: #fff;
+}
+
+.flip-hint {
+  color: var(--text-muted);
+  font-size: 1rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.flip-hint span {
+  display: inline-block;
+  animation: pulsePoint 1.5s infinite;
+}
+
+.flip-back {
+  background: linear-gradient(135deg, rgba(255, 42, 116, 0.15), rgba(15, 18, 30, 0.95));
+  border-color: rgba(255, 42, 116, 0.4);
+  transform: rotateY(180deg);
+  text-align: right;
+}
+
+.flip-back h3 {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--primary-pink);
+  margin-bottom: 15px;
+}
+
+.skills-checklist {
+  list-style: none;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 25px;
+}
+
+.skills-checklist li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #e2e8f0;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.skills-checklist li span {
+  color: var(--primary-cyan);
+}
+
+/* ===================================================
+   10. FOOTER
+   =================================================== */
+footer {
+  position: relative;
+  z-index: 10;
+  background: #07080c;
+  border-top: 1px solid var(--border-card);
+  padding: 50px 8% 30px;
+  text-align: center;
+}
+
+.footer-content {
+  max-width: 600px;
+  margin: 0 auto 30px;
+}
+
+.footer-logo {
+  font-size: 1.8rem;
+  font-weight: 900;
+  margin-bottom: 10px;
+}
+
+.footer-logo span {
+  color: var(--primary-pink);
+}
+
+.footer-socials {
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  margin: 20px 0;
+}
+
+.footer-bottom {
+  color: #64748b;
+  font-size: 0.85rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  padding-top: 25px;
+}
+
+/* ===================================================
+   11. RESPONSIVE DESIGN (MEDIA QUERIES)
+   =================================================== */
+@media (max-width: 768px) {
+  .hero-title { font-size: 2.2rem; }
+  .services-grid { grid-template-columns: 1fr; }
+  .flip-card-container { height: 440px; }
+  .skills-checklist { grid-template-columns: 1fr; }
+  nav { flex-direction: column; gap: 15px; }
+}   
